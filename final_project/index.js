@@ -32,4 +32,9 @@ const PORT =5000;
 app.use("/customer", customer_routes);
 app.use("/", genl_routes);
 
-app.listen(PORT,()=>console.log("Server is running"));
+
+const os = require('os');
+const hostname = os.hostname();
+
+
+app.listen(PORT,()=>console.log(`Server is running on ${os.hostname()}`));
