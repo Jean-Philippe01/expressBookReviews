@@ -1,9 +1,11 @@
 const express = require('express');
+const session = require('express-session');
 const jwt = require('jsonwebtoken');
 let books = require("./booksdb.js");
 const regd_users = express.Router();
 
 let users = [];
+const app = express();
 
 const isValid = (username)=>{ //returns boolean
 //write code to check is the username is valid
@@ -19,6 +21,7 @@ const authenticatedUser = (username, password)=>{
 //only registered users can login
 regd_users.post("/login", (req,res) => {
   const username = req.body.username;
+  req.session.userId = username;
   const password = req.body.password;
   if (!username || !password) {
     return res.status(404).json({ message: "Error logging in" });
@@ -36,12 +39,27 @@ regd_users.post("/login", (req,res) => {
   }
 });
 
+//Middleware for session
+app.use(session({
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true } 
+}))
+
+// Middleware to parse JSON bodies
+app.use(express.json());
+
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
     let isbn = req.params.isbn;
-    let reviews = req.body.reviews;
-    let user = req.body.username;
-    books[my_isbn].reviews = reviews;
+    let text = req.body;
+    let userId = req.session.userId; 
+
+    // add/update review
+    books[isbn].reviews[userId] = text;
+    console.log(books[isbn].reviews);
+    return res.status(200).send("Review successfully added.");
 });
 
 module.exports.authenticated = regd_users;
