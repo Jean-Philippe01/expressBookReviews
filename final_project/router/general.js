@@ -3,6 +3,7 @@ let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
+const axios = require('axios');
 
 const doesExist = (username) => {
     let userswithsamename = users.filter((user) => {
@@ -25,7 +26,7 @@ public_users.post("/register", (req,res) => {
     return res.status(404).json({ message: "Unable to register user." });
 });
 
-// Get the book list available in the shop
+// // Get the book list available in the shop
 public_users.get('/',function (req, res) {
     return res.send(JSON.stringify({books}, null, 4));
 });
